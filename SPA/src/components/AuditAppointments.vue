@@ -87,7 +87,9 @@ export default {
       emptyFlag: false,
       returnedAppointment: "",
       
-      URL: `${process.env.VUE_APP_BASE_URL}:${process.env.VUE_APP_PORT}`
+      URL: process.env.VUE_APP_PORT
+        ? `${process.env.VUE_APP_BASE_URL}:${process.env.VUE_APP_PORT}`
+        : `${process.env.VUE_APP_BASE_URL}`,
     };
   },
   methods: {

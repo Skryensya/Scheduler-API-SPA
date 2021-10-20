@@ -163,7 +163,7 @@
 </template>
 
 <script>
-import axios from "axios"
+import axios from "axios";
 export default {
   data() {
     return {
@@ -181,15 +181,17 @@ export default {
       formFlag: false,
       successFlag: false,
 
-      URL: `${process.env.VUE_APP_BASE_URL}:${process.env.VUE_APP_PORT}`
-    }
+      URL: process.env.VUE_APP_PORT
+        ? `${process.env.VUE_APP_BASE_URL}:${process.env.VUE_APP_PORT}`
+        : `${process.env.VUE_APP_BASE_URL}`,
+    };
   },
   methods: {
     disabledDate(time) {
       //Disable the date in the datePicker if it is a weekend day
-      const isPast = time.getTime() < (Date.now() - 1000 * 60 * 60 * 24)
-      const isWeekend = time.getDay() == 6 || time.getDay() == 0
-      return isPast || isWeekend ? true : false
+      const isPast = time.getTime() < Date.now() - 1000 * 60 * 60 * 24;
+      const isWeekend = time.getDay() == 6 || time.getDay() == 0;
+      return isPast || isWeekend ? true : false;
     },
     async getAllAppointments() {
       await axios
@@ -199,12 +201,12 @@ export default {
           },
         })
         .then((res) => {
-          this.appointments = res.data
-        })
-      this.fillTable()
+          this.appointments = res.data;
+        });
+      this.fillTable();
     },
     fillTable() {
-      this.tableData = []
+      this.tableData = [];
       for (let i = 9; i <= 17; i++) {
         // i = amount of whole hours from 09 to 17
 
@@ -213,22 +215,22 @@ export default {
         const hour = this.appointments.find(
           (appointment) =>
             appointment != undefined && appointment.start_time == i
-        )
+        );
 
         //checks if hour exist, uf it does, it's marked as booked
-        const isBooked = hour != undefined ? true : false
+        const isBooked = hour != undefined ? true : false;
 
         //push data to the tableData array
         if (!isBooked) {
           this.tableData.push({
-            start_time: `${i > 9 ? i : "0" + i}`
-          })
+            start_time: `${i > 9 ? i : "0" + i}`,
+          });
         }
       }
     },
     createAppointment() {
       //if there is not an email, return before asking the API
-      if (!this.email) return (this.error = "Insert an Email")
+      if (!this.email) return (this.error = "Insert an Email");
       axios
         .post(`${this.URL}/api/appointments/`, {
           appointment_date: this.date,
@@ -236,44 +238,44 @@ export default {
           email: this.email,
         })
         .then((res) => {
-          this.successCreatingAppointment(res.data[0])
+          this.successCreatingAppointment(res.data[0]);
         })
         .catch((err) => {
-          this.error = err.response.data
-        })
+          this.error = err.response.data;
+        });
     },
     bookIt(row) {
       //Manages flags and sets the Hour based on the row
-      this.formFlag = true
-      this.time = row.start_time
-      this.bookAppointmentFlag = false
-      this.error = null
+      this.formFlag = true;
+      this.time = row.start_time;
+      this.bookAppointmentFlag = false;
+      this.error = null;
     },
     goBack() {
       //Manages flags and reset the email to an empty string
-      this.successFlag = false
-      this.bookAppointmentFlag = true
-      this.formFlag = false
-      this.email = ""
+      this.successFlag = false;
+      this.bookAppointmentFlag = true;
+      this.formFlag = false;
+      this.email = "";
     },
     successCreatingAppointment(data) {
       //reserts the data variables to empty strings
-      this.date = ""
-      this.time = ""
-      this.email = ""
+      this.date = "";
+      this.time = "";
+      this.email = "";
       //manages errors and flags
-      this.error = null
-      this.formFlag = false
-      this.successFlag = true
+      this.error = null;
+      this.formFlag = false;
+      this.successFlag = true;
       this.returnedAppointment = {
         id: data.id,
         date: data.appointment_date,
         time: data.start_time,
         email: data.email,
-      }
+      };
     },
   },
-}
+};
 </script>
 <style>
 </style>
